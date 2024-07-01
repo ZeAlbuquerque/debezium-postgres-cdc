@@ -1,0 +1,63 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: Connector
+metadata:
+  name: debezium-postgres-connector-23
+  namespace: confluent
+spec:
+  name: debezium-postgres-connector-23
+  taskMax: 1
+  class: io.debezium.connector.postgresql.PostgresConnector
+  configs:
+    database.hostname: postgres
+    database.port: "5432"
+    database.user: cdc-test
+    database.password: password
+    database.dbname: cdc-test
+    database.server.name: cdc-test
+    table.include.list: "public.online_sales_data"
+    plugin.name: "pgoutput"
+    slot.name: "newSlot"
+    topic.prefix: "public"
+    auto.create.topics.enable: "true"
+    errors.log.enable: "true"
+    errors.log.include.messages: "true"
+    errors.retry.delay.max.ms: "60000"
+    errors.retry.timeout: "600"
+    errors.tolerance: none
+    field.name.adjustment.mode: avro
+    key.converter: io.confluent.connect.avro.AvroConverter
+    key.converter.basic.auth.credentials.source: USER_INFO
+    key.converter.basic.auth.user.info: K2AI6FEZUJOKZA6P:QCEVQx3rQsYc9YEqhvMSO0KujCJK6ZHs7yuSF7wzPpeUNGyoGOq4m7A4js25lVFv
+    key.converter.schema.registry.url: https://psrc-57o65q.us-west2.gcp.confluent.cloud
+    schema.history.internal.store.only.captured.tables.ddl: "true"
+    schema.history.internal.consumer.sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="GQMCU7SUZIE6MZIX" password="N15kvbF88guGDWj0XXrDbUdFQKE0XT6LZBmRanASTXmp6xOnIjpZIG2jMuzHIRXi+ob5kS";
+    schema.history.internal.consumer.sasl.mechanism: PLAIN
+    schema.history.internal.consumer.security.protocol: SASL_SSL
+    schema.history.internal.consumer.ssl.endpoint.identification.algorithm: https
+    schema.history.internal.kafka.bootstrap.servers: pkc-12576z.us-west2.gcp.confluent.cloud:9092
+    schema.history.internal.kafka.topic: schema-changes.inventory
+    schema.history.internal.producer.sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="GQMCU7SUZIE6MZIX" password="N15kvbF88guGDWj0XXrDbUdFQKE0XT6LZBmRanASTXmp6xOnIjpZIG2jMuzHIRXi+ob5kS";
+    schema.history.internal.producer.sasl.mechanism: PLAIN
+    schema.history.internal.producer.security.protocol: SASL_SSL
+    schema.history.internal.producer.ssl.endpoint.identification.algorithm: https
+    snapshot.mode: initial
+    topic.creation.default.partitions: "10"
+    topic.creation.default.replication.factor: "3"
+    topic.creation.enable: "true"
+    value.converter: io.confluent.connect.avro.AvroConverter
+    value.converter.basic.auth.credentials.source: USER_INFO
+    value.converter.basic.auth.user.info: K2AI6FEZUJOKZA6P:QCEVQx3rQsYc9YEqhvMSO0KujCJK6ZHs7yuSF7wzPpeUNGyoGOq4m7A4js25lVFv
+    value.converter.schema.registry.url: https://psrc-57o65q.us-west2.gcp.confluent.cloud
+    value.converter.schemas.enable: "false"
+    decimal.handling.mode: "string"
+    converters: "timestampConverter"
+    timestampConverter.type: "techrom.kafka.connect.util.TimestampConverter"
+    timestampConverter.debug: "true"
+    transforms: DebeziumToGoldenGate
+    transforms.DebeziumToGoldenGate.type: techrom.kafka.connect.util.GoldenGateSMT
+  restartPolicy:
+    type: OnFailure
+    maxRetry: 10
+  connectClusterRef:     
+    name: connect
+    namespace: confluent 
